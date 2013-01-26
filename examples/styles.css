@@ -1,0 +1,39 @@
+html
+{
+	background: #e9eaec no-repeat 50% 0%;
+}
+/* Reset */
+
+#wrapper
+{
+	float: left;
+	width: auto;
+
+	position: relative;
+	left: 50%;
+}
+
+#iphone
+{
+	float: left;
+
+	width: 758px;
+	height: 1627px;
+	margin: 50px 0;
+
+	position: relative;
+	left: -50%;
+
+	background: transparent url('images/iphone.png') 0 0 no-repeat;
+}
+	#iphone .inner
+	{
+		float: left;
+		
+		width: 640px;
+		height: 1137px;
+
+		margin: 237px 63px;
+
+		background-color: #fff;
+	}
