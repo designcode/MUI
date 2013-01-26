@@ -26,6 +26,8 @@ var MUI = function (path, style) {
 			}, options);
 			
 			var ele = jQuery('<div class="viewport"></div>').appendTo(jQuery(options.ele));
+			this.parent = ele;
+
 			var adjustLayout = function () {
 				var header = ele.children('.header');
 				var footer = ele.children('.footer');
@@ -88,15 +90,8 @@ var MUI = function (path, style) {
 
 					return {
 						ele: ele,
-						attach: function (object, position) {
-							if( ! position)
-								position = 'center';
-
-							ele = object.ele.addClass(position).appendTo(this.ele);
-							
-							//if(position == 'center')
-								//ele.css('margin-left', (this.ele.width() / 2) - (ele.width() / 2));
-							
+						attach: function (object) {
+							ele = object.ele.appendTo(this.ele);
 							return this;
 						},
 						setHeight: function (height) {
@@ -198,7 +193,11 @@ var MUI = function (path, style) {
 		},
 
 		slides: function () {
-			ele = jQuery('<div class="slides"><ul></ul></div>').hide().appendTo(document.body);
+
+			ele = jQuery('<div class="slides"><ul></ul></div>');
+
+			if(this.parent)
+				ele.hide().appendTo(this.parent)
 
 			return {
 				ele: ele,
@@ -217,7 +216,25 @@ var MUI = function (path, style) {
 					
 					return this.ele.show();
 				},
-				moveTo: function (index, current_index, reverse) {
+				moveTo: function (index) {
+					index--;
+
+					target = this.ele.children('ul');
+
+					if(target.children('li').eq(index).get(0)) {
+						var ml = target.children('li').eq(index).width() * index;
+
+						target.animate({
+							'margin-left': -(ml)
+						}, {
+							duration: 'fast',
+							complete: function () {
+
+							}
+						});
+					}
+				},
+				_moveTo: function (index, current_index, reverse) {
 
 					var target = this.ele.children('ul');
 					var target_children = target.children('li');
@@ -262,6 +279,7 @@ var MUI = function (path, style) {
 			return {
 				ele: ele,
 				slides: this.slides,
+				parent: this.parent,
 				button: this.button,
 
 				bind: function (data, fn) {
@@ -304,7 +322,7 @@ var MUI = function (path, style) {
 						var parent = $(this).parent();
 
 						parent.parent().addClass('parent').click(function () {
-							slides.moveTo(i + 1, current_index);
+							slides._moveTo(i + 1, current_index);
 							previous_index = current_index;
 							current_index = i + 1;
 							index[current_index] = previous_index;
@@ -320,7 +338,7 @@ var MUI = function (path, style) {
 
 					if(header) {
 						back_button.click(function () {
-							slides.moveTo(previous_index, current_index, true);
+							slides._moveTo(previous_index, current_index, true);
 							
 							current_index = previous_index;
 							previous_index = index[current_index];

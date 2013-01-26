@@ -109,15 +109,16 @@ article,aside,details,figcaption,figure,footer,header,hgroup,menu,nav,section,.c
 }
 	.viewport .slides ul
 	{
+		display: inline;
 		float: left;
 		width: 100%;
-		display: inline;
 	}
 		.viewport .slides ul li
 		{
+			display: inline;
 			float: left;
 			width: 100%;
-			display: inline;
+			overflow-x: hidden;
 		}
 
 
