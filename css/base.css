@@ -112,12 +112,14 @@ article,aside,details,figcaption,figure,footer,header,hgroup,menu,nav,section,.c
 		display: inline;
 		float: left;
 		width: 100%;
+		height: 100%;
 	}
 		.viewport .slides ul li
 		{
 			display: inline;
 			float: left;
 			width: 100%;
+			height: 100%;
 			overflow-x: hidden;
 		}
 

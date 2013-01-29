@@ -76,7 +76,7 @@ Attach viewport to an existing element in document
 	}); // Adds new item "ITEM 2" in list, also attach onclick handler to that item
 
 	sublist = ui.list().add('ITEM 3.1').add('ITEM 3.2').html()
-	list.add('ITEM 3') // Adds new item "ITEM 1" in list, also attach sublist as its child
+	list.add('ITEM 3', sublist) // Adds new item "ITEM 1" in list, also attach sublist as its child
 	list_html = list.html() // Gets the HTML of list we prepared above
 	list_object = list.get() // Gets the list object we prepared above
 
