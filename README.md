@@ -56,6 +56,9 @@ Attach viewport to an existing element in document
 	footer.setHeight(100) // Set the height of footer
 	footer.attach(someButton) // Attach a UI element to footer
 
+### Other UI Elements
+MUI comes with following UI elements. Please note that header, footer, body and all the UI elements support method chainability.
+
 #### Button ####
 	btn = ui.button(); // Creates new button
 	btn.setTitle('Help') // Set button title
