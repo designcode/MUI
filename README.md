@@ -69,17 +69,21 @@ MUI comes with following UI elements. Please note that header, footer, body and 
 
 	header.attach(btn) // Attach the button we just created to header
 
+#### Form Elements ####
+	form = ui.form('Jump In'); // Creates new form and set heading to "Jump In"
+	form.fieldSet(form.label('Nick'), form.textField('nick', {id: 'nick'})); // Create a new fieldset with label and a text field
+	form.fieldSet(form.label('Nick'), form.seletBox('country', {id: 'country_list'}, 'Pakistan')); // Create a new fieldset with label and a select box (with Pakistan as selected country)
+
 #### Lists ####
 	list = ui.list(); // Creates new list
-	list.add('ITEM 1') // Adds new item "ITEM 1" in list
-	list.add('ITEM 2', {
+	l1 = list.add('ITEM 1') // Adds new item "ITEM 1" in list
+	l2 = list.add('ITEM 2', {
 		click: function () {
 			console.log(this);
 		}
 	}); // Adds new item "ITEM 2" in list, also attach onclick handler to that item
 
-	sublist = ui.list().add('ITEM 3.1').add('ITEM 3.2').html()
-	list.add('ITEM 3', sublist) // Adds new item "ITEM 1" in list, also attach sublist as its child
+	list.add('ITEM 2.1', {}, l2) // Adds new item "ITEM 2.1" as child of ITEM 2 in list
 	list_html = list.html() // Gets the HTML of list we prepared above
 	list_object = list.get() // Gets the list object we prepared above
 

@@ -156,3 +156,59 @@
 					top: 40%;
 					right: 1%;
 				}
+
+
+.viewport .form
+{
+	-webkit-border-radius: 5px;
+	border-radius: 5px;
+	
+	background-color: #f9f9f9;
+}
+	.viewport .form h2
+	{
+		padding: 1%;
+		font-size: 20px;
+		font-weight: bold;
+	}
+	.viewport .form fieldset
+	{
+		padding: 0;
+		border-top: 1px solid #cad7e3;
+	}
+		.viewport .form fieldset:first-child
+		{
+			padding: 0;
+			border: none;
+		}
+		.viewport .form fieldset.checkboxes
+		{
+			padding-top: 0;
+			border-top: none;
+		}
+		
+		.viewport .form fieldset label
+		{
+			float: left;
+			width: 31%;
+			padding: 2%;
+		}
+			.viewport .form fieldset.checkboxes label
+			{
+				width: 25%;
+				margin: 0;
+			}
+		
+		.viewport .form fieldset input
+		{
+			float: left;
+			width:61%;
+			padding: 2%;
+			border: none;
+		}
+			.viewport .form fieldset input.button
+			{
+				margin: 2%;
+				-webkit-border-radius: 5px;
+				border-radius: 5px;
+			}

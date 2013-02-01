@@ -36,13 +36,15 @@ var MUI = function (path, style) {
 				var header_height = header.outerHeight();
 				var footer_height = footer.outerHeight();
 
+				// console.log(ele.outerHeight() - (header_height + footer_height), header_height, footer_height)
+
 				body.css({
 					'height'			:	ele.outerHeight() - (header_height + footer_height),
 					'margin-top'		:	header_height,
 					'margin-bottom'		:	footer_height
 				});
 			}
-
+			
 			$(window).resize(adjustLayout);
 
 			return {
@@ -57,10 +59,12 @@ var MUI = function (path, style) {
 						ele: ele,
 						setTitle: function (heading) {
 							this.ele.children('.heading').html(heading);
+							this.ele.trigger('update');
 							return this;
 						},
 						attach: function (object) {
 							object.ele.appendTo(this.ele);
+							this.ele.trigger('update');
 							return this;
 						},
 						setHeight: function (height) {
@@ -72,7 +76,8 @@ var MUI = function (path, style) {
 
 				body: function () {
 
-					var ele = jQuery('<div class="body"></div>').appendTo(this.ele);
+					var ele = jQuery('<div class="body"></div>').appendTo(this.ele).on('update', this.adjustLayout).trigger('update');
+					//ele.trigger('update');
 					
 					return {
 						ele: ele,
@@ -92,6 +97,7 @@ var MUI = function (path, style) {
 						ele: ele,
 						attach: function (object) {
 							ele = object.ele.appendTo(this.ele);
+							this.ele.trigger('update');
 							return this;
 						},
 						setHeight: function (height) {
@@ -112,7 +118,7 @@ var MUI = function (path, style) {
 
 			if( ! options) options = {};
 
-			ele = jQuery('<a class="button '+(options.position || 'left')+' '+(options.class || 'none')+'"></a>');
+			var ele = jQuery('<a class="button '+(options.position || 'left')+' '+(options.className || 'none')+'"></a>');
 
 			return {
 				ele: ele,
@@ -124,8 +130,8 @@ var MUI = function (path, style) {
 					this.ele.click(fn);
 					return this;
 				},
-				addClass: function (klass) {
-					this.ele.addClass(klass);
+				addClass: function (className) {
+					this.ele.addClass(className);
 					return this;
 				},
 				setPosition: function (position) {
@@ -144,7 +150,7 @@ var MUI = function (path, style) {
 		},
 
 		tabs: function () {
-			ele = jQuery('<ul class="tabs"></ul>');
+			var ele = jQuery('<ul class="tabs"></ul>');
 
 			return {
 				ele: ele,
@@ -194,19 +200,19 @@ var MUI = function (path, style) {
 
 		slides: function () {
 
-			ele = jQuery('<div class="slides"><ul></ul></div>');
+			var ele = jQuery('<div class="slides"><ul></ul></div>');
 
 			if(this.parent)
 				ele.hide().appendTo(this.parent)
 
 			return {
 				ele: ele,
-				add: function (title, options) {
+				current: 0,
+				add: function (content, options, return_item) {
 					if( ! options) options = {};
-					$('<li />').html(title).appendTo(this.ele.children('ul'));
-					return this;
-				},
-				get: function () {
+					
+					var item = $('<li />').html(content).appendTo(this.ele.children('ul'));
+
 					var parent_width = this.ele.parent().width();
 					var ul = this.ele.children('ul');
 					var lis = ul.children('li');
@@ -214,14 +220,21 @@ var MUI = function (path, style) {
 					ul.css('width', parent_width * lis.length)
 					lis.css('width', parent_width);//.not(':first-child').hide();
 					
+					if(return_item)
+						return item;
+					else
+						return this;
+				},
+				get: function () {
 					return this.ele.show();
 				},
-				moveTo: function (index) {
+				_moveTo: function (index) {
 					index--;
 
 					target = this.ele.children('ul');
 
 					if(target.children('li').eq(index).get(0)) {
+						this.current = index;
 						var ml = target.children('li').eq(index).width() * index;
 
 						target.animate({
@@ -229,24 +242,22 @@ var MUI = function (path, style) {
 						}, {
 							duration: 'fast',
 							complete: function () {
-
 							}
 						});
 					}
 				},
-				_moveTo: function (index, current_index, reverse) {
+				moveTo: function (index, reverse) {
+					index--;
 
 					var target = this.ele.children('ul');
 					var target_children = target.children('li');
 					var ml = target_children.eq(index).width() * 1;
-					
-					if( ! current_index)
-						current_index = 0;
-					
-					target_children.not(':eq('+index+')').not(':eq('+current_index+')').hide();
+
+					target_children.hide();
 					target_children.eq(index).show();
-					target_children.eq(current_index).show();
-					
+					target_children.eq(this.current).show();
+
+					//console.log(index, this.current);
 
 					var prop = [], direction;
 					if(reverse) {
@@ -259,10 +270,12 @@ var MUI = function (path, style) {
 					}
 					
 					
+					var thisProxy = this;
 					target.animate(prop, {
 						duration: 'fast',
 						complete: function () {
-							target_children.eq(current_index).hide();
+							target_children.eq(thisProxy.current).hide();
+							thisProxy.current = index;
 							target.css(direction, 0);
 						}
 					});
@@ -272,15 +285,36 @@ var MUI = function (path, style) {
 			}
 		},
 
-		list: function () {
+		list: function (header, options) {
 			
-			ele = jQuery('<div class="list"><ul></ul></div>');
+			var back_button = false;
+			var tpl = '<div class="list"><ul></ul></div>';
+			var slide = this.slides();
+			var ele = jQuery(tpl);
+			slide.add(ele);
 
+			if( ! options) options = {};
+
+			if(header) {
+				back_button = this.button().setTitle(options.btn_title || 'Back');
+				header.attach(back_button.hide());
+
+				back_button.click(function () {
+
+					var parent_index = slide.ele.children('ul').children('li').eq(slide.current).data('parent');
+					slide.moveTo(parent_index + 1, true)
+					
+					console.log(parent_index)
+					if(parent_index < 1)
+						back_button.hide();
+				});
+			}
+			
 			return {
 				ele: ele,
-				slides: this.slides,
-				parent: this.parent,
-				button: this.button,
+				tpl: tpl,
+				slide: slide,
+				back_button: back_button,
 
 				bind: function (data, fn) {
 					
@@ -288,67 +322,181 @@ var MUI = function (path, style) {
 
 					return this;
 				},
-				add: function (content, options, child) {
+				add: function (content, options, parent) {
 					if( ! options) options = {};
 					
-					item = $('<li />').html(content).click(options.click || false).appendTo(this.ele.children('ul'));
+					var item = $('<li />').html(content).click(options.click || false);
+
+					if(parent) {
+
+						var parent_ele;
+						var slide_ele;
+
+						if( ! parent.data('slided'))
+						{
+							parent_ele = $(this.tpl);
+							slide_ele = this.slide.add(parent_ele, {}, true);
+							parent.data('slided', '1')
+							parent.data('slide_ele', slide_ele)
+							parent.data('child', this.slide.ele.children('ul').children('li').index(slide_ele));
+
+							//console.log(slide_ele, parent.parent().parent().parent());
+							//console.log();
+							
+							slide_ele.data('parent', this.slide.ele.children('ul').children('li').index(parent.parent().parent().parent()));
+
+							var slideProxy = this.slide;
+							var thisProxy = this;
+							
+							parent.addClass('parent').click(function () {
+								if(thisProxy.back_button)
+									thisProxy.back_button.show();
+								slideProxy.moveTo($(this).data('child') + 1);
+								//console.log(slideProxy.current);
+							}).append('<span class="arrow">&raquo;</span>');
+						}
+						else
+							slide_ele = parent.data('slide_ele');
+
+
+						item.appendTo(slide_ele.children('div.list').children('ul'));
+					}
+					else
+					{
+						item.appendTo(this.ele.children('ul'));
+					}
 					
-					if(child)
-						item.append(child);
-					
-					return this;
+					return item;
 				},
 				html: function () {
 					return this.ele;
 				},
-				get: function (header, options) {
+				get: function () {
+
+					return this.slide.get();
+				}
+			}
+		},
+
+		form: function (heading) {
+			ele = jQuery('<form class="form"></form>').submit(function (e) { e.preventDefault(); });
+			if(heading)
+				ele.append('<h2>'+heading+'</h2>')
+
+			return {
+				ele: ele,
+
+				submit: function (fn) {
+					if(fn)
+						fn.apply(this.ele);
+
+					return this;
+				},
+
+				get: function () {
+					return this.ele;
+				},
+
+				fieldSet: function (label, input, options) {
+					if( ! options) options = {};
+
+					ele = jQuery('<fieldset />').addClass(options.className || '')
+
+					if(options.fieldset)
+						ele.appendTo(options.fieldset);
+					else
+						ele.appendTo(this.ele);
+
+					if(label)
+						ele.append(label);
+
+					if(input)
+						ele.append(input);
+
+					return ele;
+				},
+
+				label: function (title, options) {
+					if( ! options) options = {};
+
+					ele = jQuery('<label class="label '+(title || '')+'" for="'+ (options.id || '') +'">'+title+'</label>');
+
+					if(options.fieldset)
+						ele.appendTo(options.fieldset);
+
+					return ele;
+				},
+
+				field: function (name, options) {
 
 					if( ! options) options = {};
 
-					var slides = this.slides();
-					var index = [];
-					var current_index = 0;
-					var previous_index = 0;
+					ele = jQuery('<input type="'+(options.type || 'text')+'" id="'+(options.id || '')+'" name="'+name+'" value="'+(options.value || '')+'" class="input '+(options.type || 'text')+' '+ (options.className || '') +'" />');
 
-					if(header) {
-						var back_button = this.button().setTitle(options.btn_title || 'Back');
-						header.attach(back_button.hide());
-					}
+					if(options.fieldset)
+						ele.appendTo(options.fieldset);
 
+					return ele;
+				},
 
-					slides.add(this.ele.get(0));
+				hiddenField: function (name, options) {
 
-					this.ele.find('div.list > ul').each(function (i) {
-						var parent = $(this).parent();
+					options = jQuery.extend({
+						type: 'hidden'
+					}, options || {});
 
-						parent.parent().addClass('parent').click(function () {
-							slides._moveTo(i + 1, current_index);
-							previous_index = current_index;
-							current_index = i + 1;
-							index[current_index] = previous_index;
+					return this.field(name, options);
+				},
 
-							if(current_index > 0)
-								back_button.show();
-								
-						}).append('<span class="arrow">&raquo;</span>');
+				textField: function (name, options) {
 
-						slides.add(parent.detach());
+					options = jQuery.extend({
+						type: 'text'
+					}, options || {});
+
+					return this.field(name, options);
+				},
+
+				passField: function (name, options) {
+
+					options = jQuery.extend({
+						type: 'password'
+					}, options || {});
+					
+					return this.field(name, options);
+				},
+
+				checkBox: function (name, options) {
+
+					options = jQuery.extend({
+						type: 'checkbox'
+					}, options || {});
+					
+					return this.field(name, options);
+				},
+
+				selectBox: function (name, options, selected) {
+
+					if( ! options) options = {};
+
+					ele = jQuery('<select name="'+name+'" class="input select '+ (options.className || '') +'"></select>');
+
+					jQuery.each(options, function (key, value) {
+						jQuery('<option value="'+key+'"'+((key == selected) ? 'selected="selected"' : '')+'>'+value+'</option>').appendTo(ele);
 					});
 
+					if(options.fieldset)
+						ele.appendTo(options.fieldset);
 
-					if(header) {
-						back_button.click(function () {
-							slides._moveTo(previous_index, current_index, true);
-							
-							current_index = previous_index;
-							previous_index = index[current_index];
-							
-							if(current_index < 1)
-								back_button.hide();
-						});
-					}
+					return ele;
+				},
 
-					return slides.get();
+				button: function (name, options) {
+					options = jQuery.extend({
+						type: 'button'
+					}, options || {});
+					
+					return this.field(name, options);
 				}
 			}
 		}

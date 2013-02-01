@@ -40,11 +40,11 @@ article,aside,details,figcaption,figure,footer,header,hgroup,menu,nav,section,.c
 
 			text-align: center;
 		}
-		.viewport .header .button
+		.viewport .header a.button
 		{
 			cursor: pointer;
 		}
-		.viewport .header .button.back { }
+		.viewport .header a.button.back { }
 
 	
 	.viewport .body
@@ -52,6 +52,7 @@ article,aside,details,figcaption,figure,footer,header,hgroup,menu,nav,section,.c
 		float: left;
 		width: 100%;
 
+		position: relative;
 		overflow: hidden;
 	}
 
@@ -67,17 +68,17 @@ article,aside,details,figcaption,figure,footer,header,hgroup,menu,nav,section,.c
 	}
 
 	
-.viewport .button
+.viewport a.button
 {
 	float: left;
 	position: absolute;
 	top: 10px;
 }
-	.viewport .button.left
+	.viewport a.button.left
 	{
 		left: 10px;
 	}
-	.viewport .button.right
+	.viewport a.button.right
 	{
 		right: 10px;
 	}
@@ -153,3 +154,44 @@ article,aside,details,figcaption,figure,footer,header,hgroup,menu,nav,section,.c
 				.viewport .list ul li.parent .arrow
 				{
 				}
+
+
+.viewport .form
+{
+	margin: 2%;
+}
+	.viewport .form h2
+	{
+		
+	}
+
+	.viewport .form fieldset
+	{
+		margin: 0 0 0 0;
+	}
+		.viewport .form fieldset:first-child { margin: 0 }
+		.viewport .form fieldset.checkboxes
+		{
+			float: left;
+			width: 65%;
+			margin: 0;
+		}
+		
+		.viewport .form fieldset label
+		{
+			float: left;
+			width: 35%;
+		}
+			.viewport .form fieldset.checkboxes label
+			{
+				width: auto;
+				margin: 0 25% 0 0%;
+			}
+		
+		.viewport .form fieldset input
+		{
+			float: left;
+		}
+			.viewport .form fieldset input.button
+			{
+			}

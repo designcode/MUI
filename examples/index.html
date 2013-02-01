@@ -11,54 +11,75 @@
 	</head>
 	<body>
 
-		<!--<div id="wrapper">
+		<div id="wrapper">
 			<div id="iphone">
 				<div class="inner"></div>
 			</div>
-		</div>-->
+		</div>
 
 		<script type="text/javascript">
 			$(function () {
 				ui = new MUI('../css', 'ios.css');
 				ui.onReady(function () {
+					$(document.body).css('overflow-y', 'auto')
 
 					/* Viewport */				
-					viewport = ui.viewPort(/*{
+					viewport = ui.viewPort({
 						ele: '#iphone .inner'
-					}*/);
+					});
 
 
 					/* Header */
 					btn = ui.button().setTitle('Help').setPosition('right').click(function () {
-						console.log(arguments, 'clicked 2');
+						window.location.href = 'https://github.com/designcode/MUI';
 					});
 					
 					header = viewport.header().setTitle('Title').attach(btn);
 
 
 					/* Content */
-					list = ui.list();
-					list.add('LI 1', {
-						click: function () {
-							console.log($(this))
-						}
-					})
-					list.add('LI 2')
-					list.add('LI 3', {}, ui.list().add('LI 3.1', {}, ui.list().add('3.1.1').html()).html())
+					list = ui.list(header, {btn_title: '&laquo; Back'});
 					
-					child4 = ui.list().add('4.2.1.2.1').add('4.2.1.2.2').html();
-					child3 = ui.list().add('4.2.1.1').add('4.2.1.2', {}, child4).html();
-					child2 = ui.list().add('4.2.1', {}, child3).html();
-					child1 = ui.list().add('LI 4.1').add('LI 4.2', {}, child2).html();
-					list.add('LI 4', {}, child1);
+					about = list.add('About MUI');
+					list.add('MUI (Mobile UI) is a JavaScript library to easily make UIs for Mobile Devices.', {}, about);
+
 					
-					text = list.get(header, {btn_title: '&laquo; Back'});
+					overview = list.add('Overview');
+					list.add('There are already comprehensive libraries like jQuery mobile and Sencha Touch, so why another library? This library is written for designers and keeps the design layer totally separate from code.', {}, overview);
+
+					
+					started = list.add('Getting Started');
+					list.add('MUI comes with base.css, this is the file where the structure of elements is defined. You play with look and feel of the UI in your separate CSS file. MUI uses jQuery for DOM manipulation. You must include latest copy of jQuery in your html.', {}, started);
+
+
+					Usage = list.add('Usage');
+					
+					Initializing = list.add('Initializing', {}, Usage);
+					list.add('First you must include jquery and mui.js in your html.<br />ui = new MUI(PATHTOCSS, YOURCSSFILE);<br />PATHTOCSS is the path where you have put base.css and your css file. YOURCSSFILE is the css file where you have made look and feel changes. MUI loads css files dynamically so you must wait until loading is completed before doing any operation. MUI comes with onReady method.', {}, Initializing);
+					
+					VP = list.add('View Port', {}, Usage);
+					list.add('Viewport is a rectangle that touches the corner of your browser/mobile screen or the element provided in parameter. All the elements are encapsulate within viewport.', {}, VP);
+
+					
+					help = list.add('Help');
+					list.add('To get full help, goto https://github.com/designcode/MUI', {}, help);
+
+
+					form = ui.form('Jump In');
+
+					form.fieldSet(form.label('Nick'), form.textField('nick', {id: 'nick'}));
+					form.fieldSet(form.label('Password'), form.passField('nick', {id: 'nick'}));
+					sf = form.fieldSet(form.label('&nbsp;'), form.button('Submit', {value: 'Submit'}).click(function () {
+						form.submit(function () {
+							alert('I am being submitted')
+						});
+					}));
+
 
 					slides = ui.slides();
-					slides.add(text);
+					slides.add(list.get());
 					slides.add($('#lorem').html());
-					slides.add($('#lorem').html());
-					slides.add($('#lorem').html());
+					slides.add(form.get());
 					text = slides.get();
 
 					content = viewport.body().setContent(text, function () {
@@ -68,16 +89,8 @@
 
 					/* Footer */
 					tabs = ui.tabs();
-					tabs.add('Tab 1', {
-						click: function () {
-							console.log('Tab 1 Clicked');
-						}
-					})
-					tabs.add('Tab 2').add('Tab 3').add('Tab 4').add('Tab 5').add('Tab 6', {
-						click: function () {
-							slides.moveTo(2);
-						}
-					});
+					tabs.add('A Nested List')
+					tabs.add('HTML').add('Form');
 					tabs.hook(text);
 
 					footer = viewport.footer().attach(tabs);

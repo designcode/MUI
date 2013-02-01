@@ -1,6 +1,8 @@
 html
 {
 	background: #e9eaec no-repeat 50% 0%;
+	overflow-x: hidden;
+	overflow-y: auto;
 }
 /* Reset */
 
@@ -26,7 +28,7 @@ html
 
 	background: transparent url('images/iphone.png') 0 0 no-repeat;
 }
-	#iphone .inner
+	#iphone > .inner
 	{
 		float: left;
 		
