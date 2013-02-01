@@ -4,6 +4,9 @@ MUI (Mobile UI) is a JavaScript library to easily make UIs for Mobile Devices.
 ## Overview
 There are already comprehensive libraries like jQuery mobile and Sencha Touch, so why another library? This library is written for designers and keeps the design layer totally separate from code.
 
+## Demo
+http://designcode.me/mui/examples/index.html
+
 ## Getting Started
 MUI comes with base.css, this is the file where the structure of elements is defined. You play with look and feel of the UI in your separate CSS file. MUI uses jQuery for DOM manipulation. You must include latest copy of jQuery in your html.
 
