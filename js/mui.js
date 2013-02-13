@@ -228,24 +228,6 @@ var MUI = function (path, style) {
 				get: function () {
 					return this.ele.show();
 				},
-				_moveTo: function (index) {
-					index--;
-
-					target = this.ele.children('ul');
-
-					if(target.children('li').eq(index).get(0)) {
-						this.current = index;
-						var ml = target.children('li').eq(index).width() * index;
-
-						target.animate({
-							'margin-left': -(ml)
-						}, {
-							duration: 'fast',
-							complete: function () {
-							}
-						});
-					}
-				},
 				moveTo: function (index, reverse) {
 					index--;
 
